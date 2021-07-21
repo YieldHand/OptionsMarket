@@ -1,0 +1,54 @@
+# DeFi Options Market
+
+## Simple options marketplace that allows anyone to sell and buy options for any ERC-20 token
+
+
+### The Problem
+
+DeFi-based options markets face a few issues today, which include:
+
+- Lack of liquidity and trade volume
+- Permissioned whitelisting of a very limited number of coins
+- Difficulty of end-user to interact with dAps
+
+### The Solution
+
+The following approach was taken to overcome these issues:
+
+- Create incentives for liquidity providers by allowing them to take a hands-off approach towards providing capital and obtaining returns. LPs don't need to provide capital to specific pairs but can provide liquidity in DAI and allow their capital to move where it's needed by both put and call options buyers.
+
+- Allow anyone to add their (or another organization's) token to the marketplace, similar to how Uniswap allows anyone to list tokens. Uniswap had a major advantage early in the DeFi swap market because many projects could quickly list there and drive their community's liquidity there. We are taking this approach.
+
+- An extremely simple user experience which allows a user to select the token they would like to trade short or long, and view all of the best offers (premiums) over various periods of time (1 week, 1 month, 1 year) along with an easy-to-read display of their break-even point and 2x, 5x, and 10x price points.
+
+### Why Use This Instead Alternatives?
+
+- As an options buyer, this option would be an easy choice because of its simplicity and efficiency (in flow, lowering gas costs and end-user trade wait times).
+
+- As an options seller, this option provides the most flexibility as there are no minimum or maximum expiration dates, order sizes, or platform token thresholds for listing.
+
+### How To Use
+
+- As a platform, you can fork this repo and deploy these contracts. We would be happy to work with you on your own interface and custom incentive programs.
+
+- As an options trader, you will use partner platforms which will have the same core with various additional features.
+
+
+### What's Next
+
+- Adding the ability to tokenize option positions, so they can be bought and sold before expiration
+
+- Simple Graph Protocol docs for querying options data to build your trade bots
+
+- Simple pluggable incentive programs whereby tokens can be deposited and users can set how these tokens should be distributed based on trade activity. This will be a new and useful way for projects to fundraise and/or create incentivizes for various trading activities.
+
+- Aztec Network deployment and development for user trade privacy
+
+- What would you like to see? You are welcome to create an issue with your suggestions.
+
+
+### Contribute
+
+- Please make all the contributions on the `develop` branch or send any questions into the Discord: https://discord.gg/7fApFnA6qW
+
+Thanks for visiting and looking forward to collaborating with you.
