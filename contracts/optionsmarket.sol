@@ -21,7 +21,7 @@ contract Core is  ReentrancyGuard {
     mapping(address=> mapping(address=> mapping(bool=> mapping(uint256=>mapping(uint256=> mapping(uint256=>uint256)))))) public orderbook;
     mapping(address=> mapping(address=>mapping(bool=> mapping(uint256=>mapping(uint256=>uint256))))) public positions;
 
-    //Queriable identifiers to get information on all orders
+    //Incrementing identifiers for orders. This number will be the last offer or purchase ID
     uint256 lastOrderId=0;
     uint256 lastPurchaseId =0;
 
@@ -144,4 +144,3 @@ contract Core is  ReentrancyGuard {
         }
     }
 }
-    

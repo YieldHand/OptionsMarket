@@ -8,14 +8,14 @@
 DeFi-based options markets face a few issues today, which include:
 
 - Lack of liquidity and trade volume
-- Permissioned whitelisting of a very limited number of coins
-- Difficulty of end-user to interact with dAps
+- Permissioned whitelisting of a very limited number of tokens
+- Difficulty of end-user to interact with dApps
 
 ### The Solution
 
 The following approach was taken to overcome these issues:
 
-- Create incentives for liquidity providers by allowing them to take a hands-off approach towards providing capital and obtaining returns. LPs don't need to provide capital to specific pairs but can provide liquidity in DAI and allow their capital to move where it's needed by both put and call options buyers.
+- Create incentives for liquidity providers by allowing them to take a hands-off approach towards providing capital and obtaining returns. LPs don't need to provide capital to specific pairs or strike prices/expirations but can provide liquidity in DAI and allow their capital to move where it's needed by both put and call options buyers dynamically earning from market order premiums.
 
 - Allow anyone to add their (or another organization's) token to the marketplace, similar to how Uniswap allows anyone to list tokens. Uniswap had a major advantage early in the DeFi swap market because many projects could quickly list there and drive their community's liquidity there. We are taking this approach.
 
@@ -27,6 +27,21 @@ The following approach was taken to overcome these issues:
 
 - As an options seller, this option provides the most flexibility as there are no minimum or maximum expiration dates, order sizes, or platform token thresholds for listing.
 
+
+## Build: Major Methods & Contracts
+
+- Core smart contract is in `contracts/optionsmarket.sol`
+
+Here are the major, core functions:
+
+- `sellOption`: allows a user to directly or on behalf of another user (if smart contract) sell an option (limit order). In the future, this can be called when a user buys an option to automatically fill their order at a predefined premium from strike price
+
+- `buyOptionByExactPremiumAndExpiry`: allows a user to sell an option based on exact information of the seller. Soon, we will add buyById which will make this easier. The UI will query Graph Protocol to find the best options and this data could be populated in the UI... However, this would make it harder for smart contracts to directly integrate with this market, which is why market orders that match liquidity pools is needed in the future. Let's build that soon!
+
+- `excersizeOption`: Once an option meets or exceeds its expiration date, anyone can execute the option for the user. Ideally, in the future, a user could be rewarded for doing this instead if a bot or the buyer/seller of the option does not do it within 12 hours of expiration so that buyers and sellers can take a handsoff approach.
+
+
+
 ### How To Use
 
 - As a platform, you can fork this repo and deploy these contracts. We would be happy to work with you on your own interface and custom incentive programs.
@@ -36,7 +51,7 @@ The following approach was taken to overcome these issues:
 
 ### What's Next
 
-- Adding the ability to tokenize option positions, so they can be bought and sold before expiration
+- Adding the ability to tokenize option positions, so they can be bought and sold before expiration. This starts by making simple transfers and transferFrom functions which include the optionID as a parameter. From there, another project or this one can tokenize positions.
 
 - Simple Graph Protocol docs for querying options data to build your trade bots
 
