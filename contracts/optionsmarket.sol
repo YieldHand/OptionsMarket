@@ -103,6 +103,22 @@ contract Core is  ReentrancyGuard {
         emit OptionOffer( seller, token, isCallOption, strikePrice, premium, expiry, amountUnderlyingToken, lastOrderId);
         return lastOrderId;
     }
+    
+    //This allows a user to immediately purchase an option based on the Id of an offer
+    function buyOptionByID(address buyer,uint256 offerId, uint256 amountPurchasing) public returns (bool){
+		require(optionOffers[offerId].isStillValid== true, "This option is no longer valid");
+		optionOffer memory opData = optionOffers[offerId
+		bool optionIsBuyable = isOptionBuyable(opData.seller, opData.token, opData.isCallOption, opData.strikePrice, opData.premium, opData.expiry, .amountPurchasing);
+		require(optionIsBuyable, "This option is not buyable. Please check the seller's offer information");
+        require(amountPurchasing <= opData.amountSelling," There is not enough inventory for this order");
+        uint256 orderSize = opData.premium.mul(amountPurchasing);
+        require(daiToken.transferFrom(msg.sender, seller, orderSize), "Please ensure that you have approved this contract to handle your DAI (error)");
+        orderbook[opData.seller][opData.token][opData.isCallOption][opData.strikePrice][opData.premium][opData.expiry].sub(amountPurchasing);
+        positions[buyer][opData.token][opData.isCallOption][opData.strikePrice][opData.expiry].add(amountPurchasing);
+        lastPurchaseId = lastPurchaseId.add(1);
+        emit OptionPurchase(buyer, opData.seller, opData.token, opData.isCallOption, opData.strikePrice, opData.premium, opData.expiry, amountPurchasing, lastPurchaseId);
+        return true;
+    }
 
     //This allows a user to immediately purchase an option based on the seller and offer information
     function buyOptionByExactPremiumAndExpiry(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing ) public returns (bool){
