@@ -151,7 +151,7 @@ contract Core is  ReentrancyGuard {
         _transfer(msg.sender, recipient, amount,purchaseId);
     }
 
-    function approve (address designee, uint256 amount , uint256 purchaseId ) public returns(bool){//allows the designee to spend an amount of options not the underlying asset
+    function approve (address designee, uint256 amount , uint256 purchaseId ) public returns(bool){//allows the designee to spend an amount of options
         require(optionPurchases[purchaseId].buyer == msg.sender,'The sender must own the option');
         require(optionPurchases[purchaseId].amountUnderlyingToken>=amount,'Cannot approve more than owned');
         _allowances[msg.sender][designee]= amount;
@@ -162,7 +162,7 @@ contract Core is  ReentrancyGuard {
         return _allowances[owner][designee];
     }
 
-    function transferFrom(address from , address recipient, uint256 amount,uint256 purchaseId) public {//Transfer the amount of options to the recipient address make sure that the the recipient address has 
+    function transferFrom(address from , address recipient, uint256 amount,uint256 purchaseId) public {//Transfer the amount of options to the recipient address
         uint256 allownace = approval(from, recipient, purchaseId);
         require(allownace == 0 ,'Not approved');
         require(allownace>= amount,'Not approved for this amount');
@@ -170,7 +170,7 @@ contract Core is  ReentrancyGuard {
         approve(recipient,allownace.sub(amount),purchaseId);
     }
 
-    function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {
+    function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {//inernal transfer function
         require(optionPurchases[purchaseId].buyer == sender,'The sender must own the option');
         require(optionPurchases[purchaseId].amountUnderlyingToken>=amount,'Cannot tranfer more than owned');
         optionPurchase memory optData = optionPurchases[purchaseId];
