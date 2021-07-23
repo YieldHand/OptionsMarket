@@ -174,6 +174,7 @@ contract Core is  ReentrancyGuard {
         require(optionPurchases[purchaseId].buyer == sender,'The sender must own the option');
         require(optionPurchases[purchaseId].amountUnderlyingToken>=amount,'Cannot tranfer more than owned');
         optionPurchase memory optData = optionPurchases[purchaseId];
+        require(!optData.exercized,'cannot transfer an exercized option');
         positions[sender][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[sender][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].sub(amount);//adjust the position of the owner
         positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].add(amount);//adjust the position of the reciever
         emit Transfer(sender, recipient, amount, purchaseId, block.timestamp);
