@@ -21,7 +21,7 @@ The following approach was taken to overcome these issues:
 
 - An extremely simple user experience which allows a user to select the token they would like to trade short or long, and view all of the best offers (premiums) over various periods of time (1 week, 1 month, 1 year) along with an easy-to-read display of their break-even point and 2x, 5x, and 10x price points.
 
-### Why Use This Instead Alternatives?
+### Why Use This Instead Of Alternatives?
 
 - As an options buyer, this option would be an easy choice because of its simplicity and efficiency (in flow, lowering gas costs and end-user trade wait times).
 
