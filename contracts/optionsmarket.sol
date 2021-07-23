@@ -20,6 +20,7 @@ contract Core is  ReentrancyGuard {
     //mappings for sellers and buyers of options (database)
     mapping(address=> mapping(address=> mapping(bool=> mapping(uint256=>mapping(uint256=> mapping(uint256=>uint256)))))) public orderbook;
     mapping(address=> mapping(address=>mapping(bool=> mapping(uint256=>mapping(uint256=>uint256))))) public positions;
+    mapping(address => mapping(address => uint256)) private _allowances;
 
     //Queriable identifiers to get information on all orders
     uint256 lastOrderId=0;
@@ -29,6 +30,8 @@ contract Core is  ReentrancyGuard {
     event OptionPurchase(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing, uint256 purchaseId);
     event OptionOffer(address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountSelling, uint256 orderId);
     event OptionExcersize(uint256 optionId, uint256 excersizeCost, uint256 timestamp);
+    event Transfer(address indexed from, address indexed to, uint256 value, uint256 purchaseId,uint256 timestamp);
+    event Approval(address indexed owner, address indexed spender, uint256 value, uint256 purchaseId);
 
    //Structures of offers and purchases
     struct optionOffer {
@@ -113,14 +116,14 @@ contract Core is  ReentrancyGuard {
         require(amountPurchasing <= amountSelling," There is not enough inventory for this order");
         uint256 orderSize = premium.mul(amountPurchasing);
         require(daiToken.transferFrom(msg.sender, seller, orderSize), "Please ensure that you have approved this contract to handle your DAI (error)");
-        orderbook[seller][token][isCallOption][strikePrice][premium][expiry].sub(amountPurchasing);
-        positions[buyer][token][isCallOption][strikePrice][expiry].add(amountPurchasing);
+        orderbook[seller][token][isCallOption][strikePrice][premium][expiry]=orderbook[seller][token][isCallOption][strikePrice][premium][expiry].sub(amountPurchasing);
+        positions[buyer][token][isCallOption][strikePrice][expiry]=positions[buyer][token][isCallOption][strikePrice][expiry].add(amountPurchasing);
         lastPurchaseId = lastPurchaseId.add(1);
         emit OptionPurchase(buyer, seller, token, isCallOption, strikePrice, premium, expiry, amountPurchasing, lastPurchaseId);
         return true;
     }
 
-    //This allows a seller to concel all or the remainder of an option offer and redeem their underlying. A seller cannot redeem the tokens that are needed by a user who already has purchased part of the offer
+    //This allows a seller to cancel all or the remainder of an option offer and redeem their underlying. A seller cannot redeem the tokens that are needed by a user who already has purchased part of the offer
     function cancelOptionOffer(uint256 offerId) public returns(bool){
         //msg.sender is seller
         require(optionOffers[offerId].seller == msg.sender, "The msg.sender has to be the seller");
@@ -143,5 +146,39 @@ contract Core is  ReentrancyGuard {
             return false;
         }
     }
+
+    function transfer (address recipient, uint256 amount, uint256 purchaseId) public{//Transfer the amount of options from the msg.sender to the recipient address
+        _transfer(msg.sender, recipient, amount,purchaseId);
+    }
+
+    function approve (address designee, uint256 amount , uint256 purchaseId ) public returns(bool){//allows the designee to spend an amount of options not the underlying asset
+        require(optionPurchases[purchaseId].buyer == msg.sender,'The sender must own the option');
+        require(optionPurchases[purchaseId].amountUnderlyingToken>=amount,'Cannot approve more than owned');
+        _allowances[msg.sender][designee]= amount;
+        emit Approval(msg.sender, designee, amount, purchaseId);
+    }
+
+    function approval(address owner, address designee, uint256 purchaseId)public returns(uint256 approvalAmount){//return the amount of options the designee can spend
+        return _allowances[owner][designee];
+    }
+
+    function transferFrom(address from , address recipient, uint256 amount,uint256 purchaseId) public {//Transfer the amount of options to the recipient address make sure that the the recipient address has 
+        uint256 allownace = approval(from, recipient, purchaseId);
+        require(allownace == 0 ,'Not approved');
+        require(allownace>= amount,'Not approved for this amount');
+        _transfer(from,recipient, amount, purchaseId);
+        approve(recipient,allownace.sub(amount),purchaseId);
+    }
+
+    function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {
+        require(optionPurchases[purchaseId].buyer == sender,'The sender must own the option');
+        require(optionPurchases[purchaseId].amountUnderlyingToken>=amount,'Cannot tranfer more than owned');
+        optionPurchase memory optData = optionPurchases[purchaseId];
+        positions[sender][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[sender][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].sub(amount);//adjust the position of the owner
+        positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].add(amount);//adjust the position of the reciever
+        emit Transfer(sender, recipient, amount, purchaseId, block.timestamp);
+    }
+
+
 }
     
