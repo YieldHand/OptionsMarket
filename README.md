@@ -2,6 +2,7 @@
 
 ## Simple options marketplace that allows anyone to sell and buy options for any ERC-20 token
 
+![Concept Screenshot of DeFi Options Market](/media/preview1.png)
 
 ### The Problem
 
