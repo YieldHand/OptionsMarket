@@ -179,11 +179,11 @@ contract Core is  ReentrancyGuard {
     }
 
     function transferFrom(address from , address recipient, uint256 amount,uint256 purchaseId) public {//Transfer the amount of options to the recipient address
-        uint256 allownace = approval(from, recipient, purchaseId);
-        require(allownace == 0 ,'Not approved');
-        require(allownace>= amount,'Not approved for this amount');
+        uint256 allowance = approval(from, recipient, purchaseId);
+        require(allowance == 0 ,'Not approved');
+        require(allowance>= amount,'Not approved for this amount');
         _transfer(from,recipient, amount, purchaseId);
-        approve(recipient,allownace.sub(amount),purchaseId);
+        approve(recipient,allowance.sub(amount),purchaseId);
     }
 
     function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {//inernal transfer function
