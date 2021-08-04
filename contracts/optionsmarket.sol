@@ -14,7 +14,9 @@ contract Core is  ReentrancyGuard {
     mapping (address => bool) public tokenActivated;
 
     //currently DAI is the stablecoin of choice and the address cannot be edited by anyone to prevent users unable to complete their option trade cycles under any circumstance. If the DAI address changes, a new contract should be used by users.
-    address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+  address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+   // address public daiTokenAddress;
+    
     IERC20 daiToken = IERC20(daiTokenAddress);
 
     //mappings for sellers and buyers of options (database)
@@ -23,8 +25,8 @@ contract Core is  ReentrancyGuard {
     mapping(address => mapping(address => uint256)) private _allowances;
 
     //Incrementing identifiers for orders. This number will be the last offer or purchase ID
-    uint256 lastOrderId=0;
-    uint256 lastPurchaseId =0;
+    uint256 public lastOrderId= 0;
+    uint256 public lastPurchaseId =0;
 
     //All events based on major function executions (purchase, offers, exersizes and cancellations)
     event OptionPurchase(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing, uint256 purchaseId);
@@ -63,6 +65,9 @@ contract Core is  ReentrancyGuard {
     mapping (uint256 => optionPurchase) public optionPurchases;
     mapping (uint256 => optionOffer) public optionOffers;
 
+ //   function setDaiAddress(address _daiAddress) public{
+  //      daiTokenAddress = _daiAddress;
+  //  }
 
     //Allows anyone to attempt to excersize an option after its excersize date. This can be done by a bot of the service provider or the user themselves
     function excersizeOption(uint256 purchaseId) public returns (bool){
@@ -127,7 +132,7 @@ contract Core is  ReentrancyGuard {
     function buyOptionByExactPremiumAndExpiry(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing ) public returns (bool){
         bool optionIsBuyable = isOptionBuyable(seller, token, isCallOption, strikePrice, premium, expiry, amountPurchasing);
         require(optionIsBuyable, "This option is not buyable. Please check the seller's offer information");
-        require(optionIsBuyable, "Sorry: there is no one selling options that meet your specifications. Perhaps try buyOptionByIds");
+       require(optionIsBuyable, "Sorry: there is no one selling options that meet your specifications. Perhaps try buyOptionByIds");
         uint256 amountSelling = orderbook[seller][token][isCallOption][strikePrice][premium][expiry];
         require(amountPurchasing <= amountSelling," There is not enough inventory for this order");
         uint256 orderSize = premium.mul(amountPurchasing);
@@ -185,6 +190,8 @@ contract Core is  ReentrancyGuard {
         _transfer(from,recipient, amount, purchaseId);
         approve(recipient,allownace.sub(amount),purchaseId);
     }
+    
+
 
     function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {//inernal transfer function
         require(optionPurchases[purchaseId].buyer == sender,'The sender must own the option');
@@ -195,6 +202,8 @@ contract Core is  ReentrancyGuard {
         positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].add(amount);//adjust the position of the reciever
         emit Transfer(sender, recipient, amount, purchaseId, block.timestamp);
     }
+
+    
 
 
 }
