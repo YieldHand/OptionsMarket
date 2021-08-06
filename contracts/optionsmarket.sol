@@ -103,6 +103,7 @@ contract Core is  ReentrancyGuard {
             orderbook[seller][token][isCallOption][strikePrice][premium][expiry] = orderbook[seller][token][isCallOption][strikePrice][premium][expiry].add(amountUnderlyingToken);
         }
         lastOrderId = lastOrderId.add(1);
+        optionOffers[lastOrderId] = optionOffer(seller, token, isCallOption, strikePrice, premium, expiry, amountUnderlyingToken, block.timestamp, true);
         emit OptionOffer( seller, token, isCallOption, strikePrice, premium, expiry, amountUnderlyingToken, lastOrderId);
         return lastOrderId;
     }
