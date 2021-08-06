@@ -121,8 +121,8 @@ contract Core is ReentrancyGuard {
             daiToken.transferFrom(opData.buyer, opData.seller, amountDAIToPay),
             "Did the buyer approve this contract to handle DAI or have anough DAI to excersize?"
         );
-        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         optionPurchases[purchaseId].exercized = true;
+        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         emit OptionExcersize(purchaseId, amountDAIToPay, block.timestamp);
         return true;
     }
@@ -324,13 +324,13 @@ contract Core is ReentrancyGuard {
         ][optionOffers[offerId].premium][optionOffers[offerId].expiry];
         address underlyingAddress = optionOffers[offerId].token;
         IERC20 underlyingToken = IERC20(underlyingAddress);
-        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         orderbook[msg.sender][optionOffers[offerId].token][
             optionOffers[offerId].isCallOption
         ][optionOffers[offerId].strikePrice][optionOffers[offerId].premium][
             optionOffers[offerId].expiry
         ] = 0;
         optionOffers[offerId].isStillValid = false;
+        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         return true;
     }
 
