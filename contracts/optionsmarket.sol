@@ -146,9 +146,9 @@ contract Core is  ReentrancyGuard {
         uint256 amountUnderlyingToReturn = orderbook[msg.sender][optionOffers[offerId].token][optionOffers[offerId].isCallOption][optionOffers[offerId].strikePrice][optionOffers[offerId].premium][optionOffers[offerId].expiry];
         address underlyingAddress  = optionOffers[offerId].token;
         IERC20 underlyingToken = IERC20(underlyingAddress);
-        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         orderbook[msg.sender][optionOffers[offerId].token][optionOffers[offerId].isCallOption][optionOffers[offerId].strikePrice][optionOffers[offerId].premium][optionOffers[offerId].expiry]= 0;
         optionOffers[offerId].isStillValid = false;
+        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         return true;
 
     }
