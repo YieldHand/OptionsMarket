@@ -74,8 +74,8 @@ contract Core is  ReentrancyGuard {
         IERC20 underlyingToken = IERC20(underlyingAddress);
         uint256 amountDAIToPay = opData.amountUnderlyingToken.mul(opData.strikePrice);
         require(daiToken.transferFrom(opData.buyer, opData.seller, amountDAIToPay), "Did the buyer approve this contract to handle DAI or have anough DAI to excersize?");
-        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         optionPurchases[purchaseId].exercized= true;
+        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         emit OptionExcersize(purchaseId, amountDAIToPay, block.timestamp);
         return true;
 
