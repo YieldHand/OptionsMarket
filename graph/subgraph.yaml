@@ -1,0 +1,25 @@
+specVersion: 0.0.2
+description: YieldHand Options Market
+repository: https://github.com/YieldHand/OptionsMarket
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: OptionsMarket
+    network: mainnet
+    source:
+      # address: '0x648A66ae9765f908955D27eCEDC3A542A92A4f20'
+      abi: OptionsMarket
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - OptionOffer
+      abis:
+        - name: OptionsMarket
+          file: ./build/contracts/Core.json
+      eventHandlers:
+        - event: OptionOffer(address,address,bool,uint256,uint256,uint256,uint256,uint256)
+          handler: handleNewOptionOffer
+      file: ./src/mapping.ts
