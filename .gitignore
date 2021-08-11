@@ -1,2 +1,4 @@
 .DS_Store
 contracts/.DS_Store
+
+/node_modules
