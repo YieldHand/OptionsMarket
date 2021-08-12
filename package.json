@@ -1,0 +1,38 @@
+{
+  "name": "optionsmarket",
+  "version": "1.0.0",
+  "description": "Simple options marketplace that allows anyone to sell and buy options for any ERC-20 token",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "truffle build",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate",
+    "test": "truffle test --stacktrace",
+    "test_debug": "truffle test --debug",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YieldHand/OptionsMarket.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YieldHand/OptionsMarket/issues"
+  },
+  "homepage": "https://github.com/YieldHand/OptionsMarket#readme",
+  "dependencies": {
+    "truffle": "^5.4.2"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.2.0",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17",
+    "solhint": "^3.3.6",
+    "solhint-plugin-prettier": "0.0.5"
+  }
+}
