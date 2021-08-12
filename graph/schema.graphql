@@ -1,0 +1,10 @@
+type OptionOffer @entity {
+  id: ID!
+  orderId: BigInt!
+  token: String!
+  seller: String!
+  amountSelling: BigInt!
+  expiry: BigInt!
+  strikePrice: BigInt!
+  isCallOption: Boolean
+}
