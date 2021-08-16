@@ -2,8 +2,8 @@ const Web3 = require('web3');
 const OptionsMarket = artifacts.require('Core');
 const Usdc = artifacts.require('Usdc');
 const Dai =  artifacts.require('Dai');
-const daiABI = require('../ABI/dai.json');
-const usdcABI = require('../ABI/usdt.json');
+const daiABI = require('./ABI/dai.json');
+const usdcABI = require('./ABI/usdt.json');
 
 const core = require('../build/contracts/Core.json');
 const coreABI = core.abi
