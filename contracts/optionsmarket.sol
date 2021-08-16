@@ -14,7 +14,7 @@ contract Core is  ReentrancyGuard {
     mapping (address => bool) public tokenActivated;
 
     //currently DAI is the stablecoin of choice and the address cannot be edited by anyone to prevent users unable to complete their option trade cycles under any circumstance. If the DAI address changes, a new contract should be used by users.
-  address public daiTokenAddress = 0xf8e81D47203A594245E36C48e151709F0C19fBe8; //maiinet dai - 0x6B175474E89094C44Da98b954EedeAC495271d0F
+  address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F; //maiinet dai - 
    // address public daiTokenAddress;
     
     IERC20 daiToken = IERC20(daiTokenAddress);
