@@ -50,6 +50,16 @@ Here are the major, core functions:
 - As an options trader, you will use partner platforms which will have the same core with various additional features.
 
 
+### Test 
+
+- Tests are written in test.js in test folder
+- in optionsmarket.sol, comment out line 17 and uncomment line 18 where we have daiTokenAddress;
+- un-comment the setDaiAddress function on line 68
+- run truffle develop to run an instance of a local blockchain with generated accounts
+- "truffle migrate --reset" or "deploy" to deploy contracts
+- there are 2 test tokens created for the purpose of testing
+- still within truffle develop, run "test" to run test script
+
 ### What's Next
 
 - Adding the ability to tokenize option positions, so they can be bought and sold before expiration. This starts by making simple transfers and transferFrom functions which include the optionID as a parameter. From there, another project or this one can tokenize positions.

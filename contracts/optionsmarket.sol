@@ -15,7 +15,8 @@ contract Core is  ReentrancyGuard {
 
     //currently DAI is the stablecoin of choice and the address cannot be edited by anyone to prevent users unable to complete their option trade cycles under any circumstance. If the DAI address changes, a new contract should be used by users.
     address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    IERC20 daiToken = IERC20(daiTokenAddress);
+// address public daiTokenAddress;
+	IERC20 daiToken = IERC20(daiTokenAddress);
 
     //mappings for sellers and buyers of options (database)
     mapping(address=> mapping(address=> mapping(bool=> mapping(uint256=>mapping(uint256=> mapping(uint256=>uint256)))))) public orderbook;
@@ -62,6 +63,12 @@ contract Core is  ReentrancyGuard {
     //publicly available data for all purchases and sale offers
     mapping (uint256 => optionPurchase) public optionPurchases;
     mapping (uint256 => optionOffer) public optionOffers;
+
+
+	//   function setDaiAddress(address _daiAddress) public{
+  //      daiTokenAddress = _daiAddress;
+  //  }
+
 
 
     //Allows anyone to attempt to excersize an option after its excersize date. This can be done by a bot of the service provider or the user themselves
