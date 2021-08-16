@@ -14,10 +14,9 @@ contract Core is  ReentrancyGuard {
     mapping (address => bool) public tokenActivated;
 
     //currently DAI is the stablecoin of choice and the address cannot be edited by anyone to prevent users unable to complete their option trade cycles under any circumstance. If the DAI address changes, a new contract should be used by users.
-  address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F; //maiinet dai - 
-   // address public daiTokenAddress;
-    
-    IERC20 daiToken = IERC20(daiTokenAddress);
+    address public daiTokenAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+// address public daiTokenAddress;
+	IERC20 daiToken = IERC20(daiTokenAddress);
 
     //mappings for sellers and buyers of options (database)
     mapping(address=> mapping(address=> mapping(bool=> mapping(uint256=>mapping(uint256=> mapping(uint256=>uint256)))))) public orderbook;
@@ -25,8 +24,8 @@ contract Core is  ReentrancyGuard {
     mapping(address => mapping(address => uint256)) private _allowances;
 
     //Incrementing identifiers for orders. This number will be the last offer or purchase ID
-    uint256 public lastOrderId= 0;
-    uint256 public lastPurchaseId =0;
+    uint256 lastOrderId=0;
+    uint256 lastPurchaseId =0;
 
     //All events based on major function executions (purchase, offers, exersizes and cancellations)
     event OptionPurchase(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing, uint256 purchaseId);
@@ -65,9 +64,12 @@ contract Core is  ReentrancyGuard {
     mapping (uint256 => optionPurchase) public optionPurchases;
     mapping (uint256 => optionOffer) public optionOffers;
 
- //   function setDaiAddress(address _daiAddress) public{
+
+	//   function setDaiAddress(address _daiAddress) public{
   //      daiTokenAddress = _daiAddress;
   //  }
+
+
 
     //Allows anyone to attempt to excersize an option after its excersize date. This can be done by a bot of the service provider or the user themselves
     function excersizeOption(uint256 purchaseId) public returns (bool){
@@ -79,8 +81,8 @@ contract Core is  ReentrancyGuard {
         IERC20 underlyingToken = IERC20(underlyingAddress);
         uint256 amountDAIToPay = opData.amountUnderlyingToken.mul(opData.strikePrice);
         require(daiToken.transferFrom(opData.buyer, opData.seller, amountDAIToPay), "Did the buyer approve this contract to handle DAI or have anough DAI to excersize?");
-        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         optionPurchases[purchaseId].exercized= true;
+        underlyingToken.transfer(opData.buyer, opData.amountUnderlyingToken);
         emit OptionExcersize(purchaseId, amountDAIToPay, block.timestamp);
         return true;
 
@@ -108,7 +110,7 @@ contract Core is  ReentrancyGuard {
             orderbook[seller][token][isCallOption][strikePrice][premium][expiry] = orderbook[seller][token][isCallOption][strikePrice][premium][expiry].add(amountUnderlyingToken);
         }
         lastOrderId = lastOrderId.add(1);
-        
+        optionOffers[lastOrderId] = optionOffer(seller, token, isCallOption, strikePrice, premium, expiry, amountUnderlyingToken, block.timestamp, true);
         emit OptionOffer( seller, token, isCallOption, strikePrice, premium, expiry, amountUnderlyingToken, lastOrderId);
         return lastOrderId;
     }
@@ -133,7 +135,7 @@ contract Core is  ReentrancyGuard {
     function buyOptionByExactPremiumAndExpiry(address buyer, address seller, address token, bool isCallOption, uint256 strikePrice, uint256 premium, uint256 expiry, uint256 amountPurchasing ) public returns (bool){
         bool optionIsBuyable = isOptionBuyable(seller, token, isCallOption, strikePrice, premium, expiry, amountPurchasing);
         require(optionIsBuyable, "This option is not buyable. Please check the seller's offer information");
-       require(optionIsBuyable, "Sorry: there is no one selling options that meet your specifications. Perhaps try buyOptionByIds");
+        require(optionIsBuyable, "Sorry: there is no one selling options that meet your specifications. Perhaps try buyOptionByIds");
         uint256 amountSelling = orderbook[seller][token][isCallOption][strikePrice][premium][expiry];
         require(amountPurchasing <= amountSelling," There is not enough inventory for this order");
         uint256 orderSize = premium.mul(amountPurchasing);
@@ -152,9 +154,9 @@ contract Core is  ReentrancyGuard {
         uint256 amountUnderlyingToReturn = orderbook[msg.sender][optionOffers[offerId].token][optionOffers[offerId].isCallOption][optionOffers[offerId].strikePrice][optionOffers[offerId].premium][optionOffers[offerId].expiry];
         address underlyingAddress  = optionOffers[offerId].token;
         IERC20 underlyingToken = IERC20(underlyingAddress);
-        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         orderbook[msg.sender][optionOffers[offerId].token][optionOffers[offerId].isCallOption][optionOffers[offerId].strikePrice][optionOffers[offerId].premium][optionOffers[offerId].expiry]= 0;
         optionOffers[offerId].isStillValid = false;
+        underlyingToken.transfer(msg.sender, amountUnderlyingToReturn);
         return true;
 
     }
@@ -185,14 +187,12 @@ contract Core is  ReentrancyGuard {
     }
 
     function transferFrom(address from , address recipient, uint256 amount,uint256 purchaseId) public {//Transfer the amount of options to the recipient address
-        uint256 allownace = approval(from, recipient, purchaseId);
-        require(allownace == 0 ,'Not approved');
-        require(allownace>= amount,'Not approved for this amount');
+        uint256 allowance = approval(from, recipient, purchaseId);
+        require(allowance == 0 ,'Not approved');
+        require(allowance>= amount,'Not approved for this amount');
         _transfer(from,recipient, amount, purchaseId);
-        approve(recipient,allownace.sub(amount),purchaseId);
+        approve(recipient,allowance.sub(amount),purchaseId);
     }
-    
-
 
     function _transfer(address sender, address recipient, uint256 amount,uint256 purchaseId) internal {//inernal transfer function
         require(optionPurchases[purchaseId].buyer == sender,'The sender must own the option');
@@ -203,8 +203,6 @@ contract Core is  ReentrancyGuard {
         positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry]=positions[recipient][optData.token][optData.isCallOption][optData.strikePrice][optData.expiry].add(amount);//adjust the position of the reciever
         emit Transfer(sender, recipient, amount, purchaseId, block.timestamp);
     }
-
-    
 
 
 }

@@ -479,32 +479,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "lastOrderId",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "lastPurchaseId",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -903,10 +877,10 @@
 			]
 		},
 		"contracts/optionsmarket.sol": {
-			"keccak256": "0x133b93852da61a35c3035046c071ff3d0420c8c17f08fffe9e915c3eb062c112",
+			"keccak256": "0xb847df1dd7d34037c5f79183fb2621f6eb57d225934124c413504ccefe128827",
 			"urls": [
-				"bzz-raw://8f04703f1a2db95d24631235d14e8e1faf3062c0056552f0191424d6e8f3143c",
-				"dweb:/ipfs/Qmeqihra23G7z74u7xbpyzfok1iGTm8RzY3R4EZN1bV6Cb"
+				"bzz-raw://e7d999df32a1e38b49a7b991cefbe79b479a4b5dfbe0753c330b316944053db8",
+				"dweb:/ipfs/QmaKfBepVVuUDGxKVGck6ka4zh1fwCTjf86JyWs3pTeCXr"
 			]
 		}
 	},
